@@ -2,6 +2,7 @@ package com.gpalacios.gameobjects;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
+import com.gpalacios.zbhelpers.AssetLoader;
 
 /**
  * Created by guille on 5/29/2016.
@@ -18,6 +19,8 @@ public class Bird{
 
   private Circle boundingCircle;
 
+  private boolean isAlive;
+
   public Bird(float x, float y, int width, int height){
     this.height = height;
     this.width = width;
@@ -25,6 +28,7 @@ public class Bird{
     velocity = new Vector2(0, 0);
     acceleration = new Vector2(0, 460);
     boundingCircle = new Circle();
+    isAlive = true;
   }
 
   public void update(float delta){
@@ -32,6 +36,11 @@ public class Bird{
 
     if(velocity.y > 200){
       velocity.y = 200;
+    }
+
+    if(position.y < -13){
+      position.y = -13;
+      velocity.y = 0;
     }
 
     position.add(velocity.cpy().scl(delta));
@@ -44,7 +53,7 @@ public class Bird{
       }
     }
 
-    if(isFalling()){
+    if(isFalling() || !isAlive){
       rotation += 480 * delta;
       if(rotation > 70){
         rotation = 70;
@@ -52,16 +61,28 @@ public class Bird{
     }
   }
 
+  public void die(){
+    isAlive = false;
+    velocity.y = 0;
+  }
+
+  public void decelerate(){
+    acceleration.y = 0;
+  }
+
   public boolean isFalling(){
     return velocity.y > 110;
   }
 
   public boolean shoudntFlap(){
-    return velocity.y > 70;
+    return velocity.y > 70 || !isAlive;
   }
 
   public void onClick(){
-    velocity.y = -140;
+    if(isAlive){
+      AssetLoader.flap.play();
+      velocity.y = -140;
+    }
   }
 
   public float getX(){
@@ -86,5 +107,9 @@ public class Bird{
 
   public Circle getBoundingCircle(){
     return boundingCircle;
+  }
+
+  public boolean isAlive(){
+    return isAlive;
   }
 }

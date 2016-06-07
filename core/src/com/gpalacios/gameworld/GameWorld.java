@@ -1,7 +1,10 @@
 package com.gpalacios.gameworld;
 
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.gpalacios.gameobjects.Bird;
 import com.gpalacios.gameobjects.ScrollHandler;
+import com.gpalacios.zbhelpers.AssetLoader;
 
 /**
  * Created by guille on 5/29/2016.
@@ -10,15 +13,39 @@ public class GameWorld{
 
   private Bird bird;
   private ScrollHandler scroller;
+  private Rectangle ground;
+  private int score = 0;
 
   public GameWorld(int midPointY){
     bird = new Bird(33, midPointY - 5, 17, 12);
-    scroller = new ScrollHandler(midPointY + 66);
+    scroller = new ScrollHandler(this, midPointY + 66);
+    ground = new Rectangle(0, midPointY+66, 136, 11);
   }
 
   public void update(float delta){
+
+    if(delta > .15f){
+      delta = .15f;
+    }
+
     bird.update(delta);
     scroller.update(delta);
+
+    if(bird.isAlive() && scroller.collides(bird)){
+      scroller.stop();
+      bird.die();
+      AssetLoader.dead.play();
+    }
+
+    if(Intersector.overlaps(bird.getBoundingCircle(), ground)){
+      scroller.stop();
+      bird.die();
+      bird.decelerate();
+    }
+  }
+
+  public void addScore(int increment){
+    score += increment;
   }
 
   public Bird getBird(){
@@ -29,4 +56,7 @@ public class GameWorld{
     return scroller;
   }
 
+  public int getScore(){
+    return score;
+  }
 }

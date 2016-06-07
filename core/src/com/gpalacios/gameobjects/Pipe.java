@@ -1,5 +1,6 @@
 package com.gpalacios.gameobjects;
 
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.Random;
@@ -16,6 +17,8 @@ public class Pipe extends Scrollable{
   public static final int VERTICAL_GAP = 45;
   public static final int SKULL_WIDTH = 24;
   public static final int SKULL_HEIGHT = 11;
+
+  private boolean isScored = false;
 
 
   public Pipe(float x, float y, int width, int height, float scrollSpeed, float groundY){
@@ -43,6 +46,25 @@ public class Pipe extends Scrollable{
   public void reset(float newX){
     super.reset(newX);
     height = r.nextInt(90) + 15;
+    isScored = false;
+  }
+
+  public boolean collides(Bird bird){
+    if(position.x < bird.getX() + bird.getWidth()){
+      return(Intersector.overlaps(bird.getBoundingCircle(), barUp)||
+          Intersector.overlaps(bird.getBoundingCircle(), barDown)||
+          Intersector.overlaps(bird.getBoundingCircle(), skullDown)||
+          Intersector.overlaps(bird.getBoundingCircle(), skullUp));
+    }
+    return false;
+  }
+
+  public boolean isScored(){
+    return isScored;
+  }
+
+  public void setScored(boolean scored){
+    isScored = scored;
   }
 
   public Rectangle getSkullUp(){
