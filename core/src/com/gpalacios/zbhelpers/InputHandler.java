@@ -2,6 +2,7 @@ package com.gpalacios.zbhelpers;
 
 import com.badlogic.gdx.InputProcessor;
 import com.gpalacios.gameobjects.Bird;
+import com.gpalacios.gameworld.GameWorld;
 
 /**
  * Created by guill on 5/29/2016.
@@ -9,9 +10,11 @@ import com.gpalacios.gameobjects.Bird;
 public class InputHandler implements InputProcessor{
 
   private Bird myBird;
+  private GameWorld myWorld;
 
-  public InputHandler(Bird bird){
-    myBird = bird;
+  public InputHandler(GameWorld myWorld){
+    this.myWorld = myWorld;
+    myBird = myWorld.getBird();
   }
 
   @Override
@@ -31,7 +34,14 @@ public class InputHandler implements InputProcessor{
 
   @Override
   public boolean touchDown(int screenX, int screenY, int pointer, int button){
+    if(myWorld.isReady()){
+      myWorld.start();
+    }
     myBird.onClick();
+
+    if(myWorld.isGameOver() || myWorld.isHighScore()){
+      myWorld.restart();
+    }
     return true;
   }
 

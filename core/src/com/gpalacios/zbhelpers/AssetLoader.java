@@ -1,6 +1,7 @@
 package com.gpalacios.zbhelpers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -23,6 +24,8 @@ public class AssetLoader{
   public static Sound coin;
 
   public static BitmapFont font, shadow;
+
+  public static Preferences prefs;
 
   public static void load(){
 
@@ -63,6 +66,21 @@ public class AssetLoader{
     shadow = new BitmapFont(Gdx.files.internal("data/shadow.fnt"));
     font.getData().setScale(.25f,-.25f);
     shadow.getData().setScale(.25f,-.25f);
+
+    prefs = Gdx.app.getPreferences("ZombieBird");
+    if(!prefs.contains("highScore")){
+      prefs.putInteger("highScore", 0);
+    }
+
+  }
+
+  public static void setHighScore(int val){
+    prefs.putInteger("highScore", val);
+    prefs.flush();
+  }
+
+  public static int getHighScore(){
+    return prefs.getInteger("highScore");
   }
 
   public static void dispose(){
